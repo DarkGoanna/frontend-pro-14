@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>hw-14</title>
+</head>
+
+<body>
+    <script>
+        function Student(name, surname, birthdayYear) {
+            this.name = name;
+            this.surname = surname;
+            this.birthdayYear = birthdayYear;
+            this._attendance = Array(30);
+            this._progress = Array(30);
+
+            Object.defineProperties(this, {
+                attendance: {
+                    get() {
+                        this._attendance.splice(30);
+                        return this._attendance;
+                    },
+                },
+                progress: {
+                    get() {
+                        this._progress.splice(30);
+                        return this._progress;
+                    },
+                },
+            });
+            Student.prototype.carrentLesson = function () {
+                let lastFalse = this.attendance.lastIndexOf(false);
+                let lastTrue = this.attendance.lastIndexOf(true);
+                let last = lastFalse > lastTrue ? lastFalse : lastTrue;
+                return ++last;
+            };
+            Student.prototype.carrentMark = function () {
+                return this.progress.filter(mark => mark).length;
+            };
+            Student.prototype.present = function () {
+                if (this.carrentLesson() < this.attendance.length) {
+                    return this.attendance[this.carrentLesson()] = true;
+                }
+            };
+            Student.prototype.absent = function () {
+                if (this.carrentLesson() < this.attendance.length) {
+                    return this.attendance[this.carrentLesson()] = false;
+                }
+            };
+            Student.prototype.mark = function (value) {
+                if (0 <= value && 10 >= value) {
+                    let nextMark = this.carrentMark();
+                    if (nextMark < this.progress.length) {
+                        return this.progress[nextMark] = value;
+                    }
+                }
+            };
+            Student.prototype.summary = function () {
+                const averageAttendance = this.attendance.reduce((acc, value) => {
+                    return acc += value ? 1 : 0;
+                }, 0) / this.carrentLesson();
+                const averageMark = this.progress.reduce((acc, value) => acc += value) / this.carrentMark();
+
+                if (averageAttendance > 0.9 && averageMark > 9) {
+                    return 'Ути какой молодчинка!';
+                } else if (averageAttendance < 0.9 && averageMark < 9) {
+                    return 'Редиска!';
+                } else {
+                    return 'Норм, но можно лучше';
+                }
+            };
+        }
+    </script>
+</body>
+
+</html>
